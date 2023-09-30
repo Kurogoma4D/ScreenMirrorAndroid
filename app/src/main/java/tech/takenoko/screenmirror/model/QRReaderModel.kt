@@ -23,11 +23,16 @@ class QRReaderModel : Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         MLog.info(TAG, "onActivityResult")
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            MLog.info(TAG, result.contents)
-            uri(result.contents)
-        }
+        val activityResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        kotlin.runCatching {
+            if (activityResult != null) {
+                MLog.info(TAG, activityResult.contents)
+                uri(activityResult.contents)
+            }
+        }.fold(
+            onSuccess = {},
+            onFailure = { e -> MLog.info(TAG, e.toString()) }
+        )
         finish()
     }
 
